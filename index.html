@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natasha Annotation</title>
+</head>
+<body>
+    <div>
+        <label for="inputText">Введите текст:</label>
+        <textarea id="inputText" rows="5"></textarea>
+    </div>
+    <div>
+        <button onclick="annotate()">Разметить</button>
+    </div>
+    <div>
+        <label for="outputText">Результат разметки:</label>
+        <div id="outputText" style="border: 1px solid #ccc; padding: 10px;"></div>
+    </div>
+
+    <script>
+        function annotate() {
+            const inputText = document.getElementById('inputText').value;
+
+            fetch('/annotate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({text: inputText}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const outputText = document.getElementById('outputText');
+                outputText.innerHTML = data.entities.map(entity => {
+                    return `<span style="background-color: ${entity.color};">${entity.text}</span>`;
+                }).join(' ');
+            });
+        }
+    </script>
+</body>
+</html>
